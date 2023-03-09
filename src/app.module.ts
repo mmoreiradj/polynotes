@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { FilesModule } from './files/files.module'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { WorkspacesModule } from './workspaces/workspaces.module'
+import { HealthModule } from './health/health.module'
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { WorkspacesModule } from './workspaces/workspaces.module'
       envFilePath: ['.env.dev.local', '.env.dev', '.env'],
     }),
     WorkspacesModule,
+    HealthModule,
     FilesModule,
   ],
 })
