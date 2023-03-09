@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import { FilesModule } from './files/files.module'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { WorkspacesModule } from './workspaces/workspaces.module'
 
 @Module({
   imports: [
@@ -12,10 +13,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
       }),
       inject: [ConfigService],
     }),
-    FilesModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.dev.local', '.env.dev', '.env'],
     }),
+    WorkspacesModule,
+    FilesModule,
   ],
 })
 export class AppModule {}
