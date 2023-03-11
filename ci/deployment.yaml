@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: polynotes-api-config
+  labels:
+    app: polynotes
+    tier: back
+data:
+  CORS_ORIGIN: 'https://polynotes.cluster-2022-7.dopolytech.fr/'
+  PORT: '3000'
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: polynotes-api-secret
+  labels:
+    app: polynotes
+    tier: back
+data:
+  MONGOOSE_URL: bW9uZ29kYitzcnY6Ly9tYXJ0aW5tb3JlaXJhZGo6RVY1MUxVaHRacmdjbEhkeEBwb2x5bm90ZXMuaml0aW04dy5tb25nb2RiLm5ldC8/cmV0cnlXcml0ZXM9dHJ1ZSZ3PW1ham9yaXR5
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: polynotes-api
+  labels:
+    app: polynotes
+    tier: back
+spec:
+  selector:
+    matchLabels:
+      app: polynotes-api
+  template:
+    metadata:
+      labels:
+        app: polynotes-api
+    spec:
+      containers:
+      - name: polynotes-api
+        image: gitlab.polytech.umontpellier.fr:5050/polynotes-mmdj/back
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: polynotes-api-config
+        env:
+          - name: MONGOOSE_URL
+            valueFrom:
+              secretKeyRef:
+                name: polynotes-api-secret
+                key: MONGOOSE_URL
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: polynotes
+    tier: back
+  name: polynotes-api
+spec:
+  ports:
+  - port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: polynotes-api
