@@ -1,0 +1,48 @@
+image: node:16
+
+stages:
+  - local-build
+  - test
+  - image-build-push
+  - kube-rollout
+
+build-npm:
+  stage: local-build
+  script:
+    - npm install
+  artifacts:
+    paths:
+      - node_modules/
+
+test-lint:
+  stage: test
+  script:
+    - npm run lint
+
+build-img:
+  stage: image-build-push
+  image: docker:20.10.16
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
+
+  services:
+    - docker:20.10.16-dind
+
+  before_script:
+    - docker info
+  script:
+    - docker build -t "$CI_REGISTRY_IMAGE" .
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_BUILD_TOKEN" "$CI_REGISTRY"
+    - docker push "$CI_REGISTRY_IMAGE"
+
+deploy-on-kube:
+  stage: kube-rollout
+  image: 
+    name: bitnami/kubectl:latest
+    entrypoint: ['']
+  script:
+    - kubectl config use-context polynotes-mmdj/back:agent
+    - kubectl rollout restart deployment polynotes-api --namespace=default
