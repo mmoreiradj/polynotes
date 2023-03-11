@@ -44,5 +44,5 @@ deploy-on-kube:
     name: bitnami/kubectl:latest
     entrypoint: ['']
   script:
-    - kubectl config use-context polynotes-mmdj/back:agent
+    - kubectl config use-context polynotes-mmdj/back:polynotes
     - kubectl rollout restart deployment polynotes-api --namespace=default
