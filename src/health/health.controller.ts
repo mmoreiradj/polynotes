@@ -1,14 +1,12 @@
 import { Controller, Get } from '@nestjs/common'
-import { HealthCheck, HealthCheckService, HttpHealthIndicator, MongooseHealthIndicator } from '@nestjs/terminus'
+import { HealthCheck, HealthCheckService, MongooseHealthIndicator } from '@nestjs/terminus'
+import { Public } from 'src/shared/decorators/is-public.decorator'
 
 @Controller('health')
 export class HealthController {
-  constructor(
-    private health: HealthCheckService,
-    private http: HttpHealthIndicator,
-    private mongoose: MongooseHealthIndicator,
-  ) {}
+  constructor(private health: HealthCheckService, private mongoose: MongooseHealthIndicator) {}
 
+  @Public()
   @Get()
   @HealthCheck()
   check() {

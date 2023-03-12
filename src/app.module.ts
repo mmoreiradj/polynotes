@@ -4,6 +4,9 @@ import { ConfigModule } from '@nestjs/config'
 // import { WorkspacesModule } from './workspaces/workspaces.module'
 import { HealthModule } from './health/health.module'
 import { PrismaService } from './prisma/prisma.service'
+import { APP_GUARD } from '@nestjs/core'
+import { JwtAuthGuard } from './shared/guards/jwt-auth.guard'
+import { AuthModule } from './auth/auth.module'
 
 @Module({
   imports: [
@@ -14,7 +17,14 @@ import { PrismaService } from './prisma/prisma.service'
     // WorkspacesModule,
     HealthModule,
     // FilesModule,
+    AuthModule,
   ],
-  providers: [PrismaService],
+  providers: [
+    PrismaService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}
