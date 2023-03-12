@@ -58,6 +58,8 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: 3000
+      imagePullSecrets:
+        - name: gitlab-registry-secret
 
 ---
 

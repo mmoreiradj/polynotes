@@ -1,5 +1,5 @@
 gitops:
   manifest_projects:
-  - id: "polynotes-mmdj"
+  - id: "polynotes-mmdj/back"
     paths:
     - glob: "/**/*.{yaml,yml,json}"
