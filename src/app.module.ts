@@ -7,6 +7,7 @@ import { PrismaService } from './prisma/prisma.service'
 import { APP_GUARD } from '@nestjs/core'
 import { JwtAuthGuard } from './shared/guards/jwt-auth.guard'
 import { AuthModule } from './auth/auth.module'
+import { MailModule } from './mail/mail.module'
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AuthModule } from './auth/auth.module'
     HealthModule,
     // FilesModule,
     AuthModule,
+    MailModule,
   ],
   providers: [
     PrismaService,
