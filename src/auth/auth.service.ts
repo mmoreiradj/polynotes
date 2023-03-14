@@ -94,6 +94,18 @@ export class AuthService {
     }
   }
 
+  async resendMail(email: string) {
+    try {
+      const user = await this.usersService.getOne({ email })
+      this.sendMail(user)
+      return
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return
+      }
+    }
+  }
+
   async sendMail(user: User) {
     const payload = { sub: user.id }
 

@@ -1,5 +1,4 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common'
-import { MailService } from 'src/mail/mail.service'
 import { GetUser } from 'src/shared/decorators/get-user.decorator'
 import { Public } from 'src/shared/decorators/is-public.decorator'
 import { JwtMailGuard } from 'src/shared/guards/jwt-mail.guard'
@@ -11,7 +10,7 @@ import { LoginDto } from './dto/login.dto'
 @Public()
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService, private readonly mailService: MailService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
@@ -27,5 +26,10 @@ export class AuthController {
   @Post('validate')
   validate(@GetUser() user: User) {
     return this.authService.validate(user)
+  }
+
+  @Post('resend')
+  resend(@Body('email') email: string) {
+    this.authService.resendMail(email)
   }
 }
