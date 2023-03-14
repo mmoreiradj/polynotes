@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
@@ -6,6 +6,7 @@ import * as argon from 'argon2'
 import { MailService } from 'src/mail/mail.service'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { User } from 'src/shared/types'
+import { UsersService } from 'src/users/users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { LoginDto } from './dto/login.dto'
 
@@ -16,15 +17,12 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
+    private readonly usersService: UsersService,
   ) {}
 
   async login(loginDto: LoginDto) {
     try {
-      const user = await this.prisma.users.findUniqueOrThrow({
-        where: {
-          email: loginDto.email,
-        },
-      })
+      const user = await this.usersService.getOne({ email: loginDto.email, active: true })
 
       if (!(await argon.verify(user.password, loginDto.password))) {
         throw new UnauthorizedException()
@@ -43,7 +41,7 @@ export class AuthService {
         access_token: this.jwtService.sign(payload),
       }
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+      if (error instanceof NotFoundException) {
         throw new UnauthorizedException()
       }
       throw error
@@ -62,19 +60,16 @@ export class AuthService {
 
       delete user.password
 
-      const payload = { sub: user.id }
-
-      const token = this.jwtService.sign(payload, {
-        secret: this.configService.getOrThrow('JWT_SECRET_MAIL'),
-        expiresIn: '1d',
-      })
-
-      this.mailService.sendRegistrationMail(user, token)
+      this.sendMail(user)
 
       return user
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
-        throw new BadRequestException('Email already taken')
+        throw new BadRequestException({
+          code: 'PN1',
+          field: 'email',
+          message: 'Email already taken',
+        })
       }
       throw error
     }
@@ -97,5 +92,16 @@ export class AuthService {
     return {
       success: true,
     }
+  }
+
+  async sendMail(user: User) {
+    const payload = { sub: user.id }
+
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.getOrThrow('JWT_SECRET_MAIL'),
+      expiresIn: '1d',
+    })
+
+    this.mailService.sendRegistrationMail(user, token)
   }
 }

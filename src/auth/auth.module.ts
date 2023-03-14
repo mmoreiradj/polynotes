@@ -8,6 +8,7 @@ import { JwtStrategy } from './strategies/jwt-auth.strategy'
 import { PassportModule } from '@nestjs/passport'
 import { MailModule } from 'src/mail/mail.module'
 import { JwtMailStrategy } from './strategies/jwt-mail.strategy'
+import { UsersService } from 'src/users/users.service'
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { JwtMailStrategy } from './strategies/jwt-mail.strategy'
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, PrismaService, JwtStrategy, JwtMailStrategy],
+  providers: [AuthService, PrismaService, JwtStrategy, JwtMailStrategy, UsersService],
   controllers: [AuthController],
 })
 export class AuthModule {}
