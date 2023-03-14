@@ -8,18 +8,29 @@ metadata:
 data:
   CORS_ORIGIN: 'https://polynotes.cluster-2022-7.dopolytech.fr/'
   PORT: '3000'
+  SMTP_HOST: 'smtp.umontpellier.fr'
+  SMTP_PORT: '587'
 
 ---
 
-apiVersion: v1
-kind: Secret
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
 metadata:
   name: polynotes-api-secret
-  labels:
-    app: polynotes
-    tier: back
-data:
-  MONGOOSE_URL: bW9uZ29kYitzcnY6Ly9tYXJ0aW5tb3JlaXJhZGo6RVY1MUxVaHRacmdjbEhkeEBwb2x5bm90ZXMuaml0aW04dy5tb25nb2RiLm5ldC8/cmV0cnlXcml0ZXM9dHJ1ZSZ3PW1ham9yaXR5
+spec:
+  encryptedData:
+    DATABASE_URL: AgCySmSWY/I9BipW9MVZouxuRab0E6CrWJmCPQfES3oND3btcQEU+hLSRolC0p81KfRZZC4M0FspG0I+F+0+XKSvhB5pTAtpi+aRUnRvP84xbHYTtqKL/3vpDeaAE2vqIZ6b86XArQrHiZ4l0z3UCNqlbpUGuInYPMneSM/R9S9C6WaaZ8cROkXeN5v5CItLy39ukVswwQJcqj78RzvB0bYLdTkDMCwdz2knIUZHeBn5dURHzcntV+3rUvH1I6PjqP3kH1nvFJdf6Sqb4CrKFez5v4gtjH45OM/hTAuiS3r5A6kfYaQxtRmldBEoLIAxFegUsaea44HdlYqvRN4QYF4ePFeOo/YNLXXEOc/6rBjQzjR477Ee97+IrX4LcAV5VjGVaJ9ahKhpStebmuOVg1IvHZ9HeWBACHqwB6Pdod8iGO/VKHgzt9yodczQmEF48GX5XM3/iFYGDewJPVN8TXs01QFda8C9KxbelquBEXH08HnArSjog+Fgg7q0oXou8JeWvuAgDzo+4MlpIt8svl5hQXa6Pd6cccZYuNtoX2a68eV83kcPCKWDt3mrrinhV2W2IzvSlep2RdhrN9l9Y/55+3kMz/DJekFqxkxe1T+454kyPv+7mQ1HzFSo0bPHDQPzcY0EqtTrw0uNyMejIh+wUuyVuREioC7mj1t84j+3thfuFwjWfKb7ecmnToLiaGi1u6vmWi10q6AlJMfldjs1QShMiJcFehXb4/5uxS+eppYyXS3NhSfZa/53+ukDz+6//7pMo12AcV0jdoh4FZdeb4I1pGQ9B+Jy+kQCmVMzCKWHBCp7lSf7vwiQyetK77o1Iv10vGEuPxa1zf2mhbLaPcs0bh1N
+    JWT_SECRET: AgCpwvkTNwAQtlwwppVVvzCTCJgCFbjlH/jeigbSgHisA9Vn6aEu6KRq0FMajQwt7fhepjPsku0XBwxk/wLoNCMw6vtFoeejfvZkkhkFc9h6ITVFVGWHy5o3XB4iWqMb/sc8fr6G4XtVKSRegacjcIVbi1U7Ck4lNGx/7sZqwiB95ubM7cfT1pyLVbowa34A0DHxbDxC3FqM0yeHCWxgA+TctjU4hXa7fqqePcedcWlxMS3F9jaMQ1bKxBUUmJ0wLnAM2/GMvNMxpK1Uowe+53rl2HagViCJuMOBObjBQPXefbzJ702EQGVAEGt3KU0vJVJyb331aIAMNknKtl+YlfoGdurHUPVSvdQdO490y7c2PzPFrZlSTA7mZ9Ew9UkOz+KAf/GKhFZJgxifxw/dkJ7ZL3Mt/vxFSYQkqnVQ65chCQlvm+EbvTqKRyDzAGvqoidfmhvCMjnTSpymWRUpEH4MN75ihdEVWaYKcqOD/QS6wtVdqAhN16kxYjg7Z7cjrFJ2kZvQnl5PSCsUL43udJTFGHPIKK6e662zEWYaByK4WECp1buSgKi8ICoiTR9TugL+62My0YBIqATYrLiWxa3iqQOnk8nSlOG/pj35hDgpAQhDTSOeRjpqvzSXcArMxhCx8W/3ZiPa1Ie/XT9dXLSludIq/tylEEVviNFUVL07vNT/dOTHt5zR7Bor//kbdUjqbDqHk+xVxlrn74/se7nL6spGWiiDDI4ilhqBpGc97M7wO5DMzt/MCct8DR8NB9xr2Cpwf4JogDpFpgs/Wm5s
+    JWT_SECRET_MAIL: AgAKc7g4/YqDu5CMik9ly0WmmqR5kjdiYul8ZbecYMB+wt3mDpTRuc0Z5mmG8NWWbjAky2dTIB3AhW2r6AO/djdwM4AHg1lLkH6tOR8e2E/osullHrsJGl/D1B8zYs5NeMpob/4AwoAyrTyEu2rg42Hd9jVnjgYiQs+QlgU7pRapHohvUEon8RsLYGQB4Li5TUG/pWi4iCmNxfUvD9Mp2M22q40wyt1TnTMQ7S0N1c3GqQXlRnbmX/aZqhDjqYdCSNMe90g7XgNlZ/IUnRm/VC+yrKU1UghKxx+HfW3j1D59AkdDBapT8EhLCMuhdalLa/jjjWCXgNTTkzGSPMZ2qRVjAIObHM2878o39Bde1DcY64G82cyXOJlbNLX6FsgO24b7MOq+uDwaIWfaYMIzmnuvbEuS+mzzDPmlGBvjp4Mrq6ZbsZAHFJ21BJiDKTsTA3zf7V2IJ2hvNmND2hptRRtrZefTnNOTZMJpB9Qp+9OCRTce4AN55PVs/VbH6GAf9HTMWV2Gl/ppeDeZrMHx0NIiILlECZVBwIWXmPlF9ETjmdUgJXjit6mbUGZ7LEv2JD2zgjev7ga7GlJQDwkWuB4HOFv9AOgyP7s1nZeg/QXlkKiHpbzo42xvJhdMgTdiGORxJ6zX2jpYp9UUIvBugxQo7PSH8MGETTSjnm2Y38YV7FGoOhZEjriEbfGSqG1NCUj09shRiqEjWYg1SYiFDUNaJyPpoIQE9xU2vYTDLUxsuaSfgc+Z3hcs6Y7IRw9IYJ5YOtZI0CzE0QLgryY1t3guiA==
+    SMTP_PASS: AgBTJU4mjpumZH3pLE7Qe+OtSiPxixke/clAzmx8oUCGzkqqBHYDfUZ4mLJ8PEoNrXtgEvQnIw2a20UIzMtoAXDwFXRfco9JTPU+4ofOdMWJ4kIQ/eUbSps9N8qhWOdxA2Mp4nyWz95kd1zUH71lYElk7RSzkNGllQ+4Zz+1fU3q4lwmzFy4iXK5z9TbuJvlw/Tq3NJoQkUPT49RobVOBIaaocknOCgWVVq1c2drp3q+6khYMZ8huQL9SvYT9TOx8nVhHRAcuWbWAg7GQUGenX6XWWizRy7QLPhmDT0luIybvZo+wmxCNIlHIgpIElZlhS5u4UgF2cyXpkOh76oifk0381JU1jISWIRycxkUoJi87L0LuWFmoATuQ7SiVZ+4Bpct+9RwehQhzJNKdQrWmCr+G+N8h90jE7+KmE64dkr53TIcqm8FfAxm/THyE3ibOr2gDPO9u9yhbdJJypf8wgQwt3TQ6/bXH71dYUS7gzUXNhMvkZhpefVmvNbK7sbUEWVtg1fFbUPr7hSQjOOzdtPga7E9NlxUXJSUFD2feJ5+odgB65hv+IM+ElTAZEd/TBqDrobvCHCAsBw9iDOubU5N7X6wqPPwUo/y5iMRsGM+ukTpUl6Gri6wUG0VEFzd+tGVMrryebbGur2Nyhgf9yRb/6Ox9bsBa4iVuoutrc2ek980ON4tAREdCio4qKvdmfRdlNpFGrO4Ca7mvAg2AfI=
+    SMTP_USER: AgBn7hgRRtvndh6d4hZN27U5v56EcVQ0M0OUeSZm2nQJ+b1xlsxTemOnY8gefoEEDUbvzUwLaTJrn+k+w0bbixFqAU2OO3u3iCFWEWH2Qs+yP1GQSK37zXL3QtWjKhzXMopzHxIgEGaSlQkB9E31yXp4qO7DHZOkoSDI9dkmb18mvFhd+8zkdS8rV2+Dx3bbkXF9/wM3rommH0JKud9HoNAP5qGYWO6TncrBVXNO4rhAyhzh1x0Zy8Ah5iwlaL1AO1yYVoKupKpdhJBzRpdFY5xRsG9bBq6cliPsyYDyPL14kzKQluAMIHDuCgidKO7kcCBxUHb3YAR6sL7CcIOxLmuBgjrtF5hjwEY/zn7vaVWFnbCD2mEkHaCXZYbaROIT6Zyr/XztziRuWcix3Zss9ahSC12y8H/+il8bKM5lsbJZkUFM34aeJCeMyvkSYctvxWgNOgzFdgr7Z0V08Xn/b1Mkk+ZbPI4KhOpiLQ5P4UtfiEMV8WoaVNA2f/4OPihhfffTL+WmK0CZ/MvEBTA9p+JRXekXu7AjFqh7yK21SVBcu/1hB0+ElcsyBNfsgsJjaQUIaoRHU9g8OnInkGGUpXKzawmRR2mPytduYG9ftameuo339XRwEhUmgNpZoFfx/Pl9+jlmpBtzJsstAPRyNEtdzSqRLKiQGbvQlo8YkYQ7iXt7bwrq58UkB590VcS89//2tfLfpUSJt7hejm+FP1h/+5sITwilRSYXYP8P/JhsBCW7kiXBNc4qfxCd
+  template:
+    metadata:
+      labels:
+        app: polynotes
+        tier: back
+      name: polynotes-api-secret
+      namespace: default
 
 ---
 
@@ -52,6 +63,26 @@ spec:
               secretKeyRef:
                 name: polynotes-api-secret
                 key: MONGOOSE_URL
+          - name: JWT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: polynotes-api-secret
+                key: JWT_SECRET
+          - name: JWT_SECRET_MAIL
+            valueFrom:
+              secretKeyRef:
+                name: polynotes-api-secret
+                key: JWT_SECRET_MAIL
+          - name: SMTP_PASS
+            valueFrom:
+              secretKeyRef:
+                name: polynotes-api-secret
+                key: SMTP_PASS
+          - name: SMTP_USER
+            valueFrom:
+              secretKeyRef:
+                name: polynotes-api-secret
+                key: SMTP_USER
         resources:
           limits:
             memory: "128Mi"
