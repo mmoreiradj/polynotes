@@ -37,8 +37,13 @@ export class AuthService {
 
       const payload = { sub: user.id }
 
+      const access_token = this.jwtService.sign(payload, {
+        secret: this.configService.getOrThrow('JWT_SECRET'),
+        expiresIn: '3d',
+      })
+
       return {
-        access_token: this.jwtService.sign(payload),
+        access_token,
       }
     } catch (error) {
       if (error instanceof NotFoundException) {
