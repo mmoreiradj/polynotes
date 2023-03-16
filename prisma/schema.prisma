@@ -14,3 +14,9 @@ model users {
   password String
   active Boolean @default(false)
 }
+
+model workspaces {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  owner String @db.ObjectId
+}

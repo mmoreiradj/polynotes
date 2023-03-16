@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common'
-// import { FilesModule } from './files/files.module'
 import { ConfigModule } from '@nestjs/config'
-// import { WorkspacesModule } from './workspaces/workspaces.module'
 import { HealthModule } from './health/health.module'
 import { PrismaService } from './prisma/prisma.service'
 import { APP_GUARD } from '@nestjs/core'
 import { JwtAuthGuard } from './shared/guards/jwt-auth.guard'
 import { AuthModule } from './auth/auth.module'
 import { MailModule } from './mail/mail.module'
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './users/users.module'
+import { WorkspacesModule } from './workspaces/workspaces.module'
 
 @Module({
   imports: [
@@ -16,7 +15,7 @@ import { UsersModule } from './users/users.module';
       envFilePath: ['.env.dev.local', '.env.dev', '.env'],
       isGlobal: true,
     }),
-    // WorkspacesModule,
+    WorkspacesModule,
     HealthModule,
     // FilesModule,
     AuthModule,

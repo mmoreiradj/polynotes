@@ -1,44 +1,54 @@
 import { Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { Model, ObjectId } from 'mongoose'
+import { PrismaService } from 'src/prisma/prisma.service'
+import { User } from 'src/shared/types'
 import { CreateWorkspaceDto } from './dto/create-workspace.dto'
-import { SearchWorkspaceDto } from './dto/search-workspace.dto'
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto'
-import { Workspace, WorkspaceDocument } from './schema/workspace.schema'
 
 @Injectable()
 export class WorkspacesService {
-  constructor(@InjectModel(Workspace.name) private workspaceModel: Model<WorkspaceDocument>) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  create(createWorkspaceDto: CreateWorkspaceDto): Promise<WorkspaceDocument> {
-    const createdWorkspace = new this.workspaceModel(createWorkspaceDto)
-    return createdWorkspace.save()
+  create(user: Partial<User>, createWorkspaceDto: CreateWorkspaceDto) {
+    return this.prisma.workspaces.create({
+      data: {
+        ...createWorkspaceDto,
+        owner: user.id,
+      },
+    })
   }
 
-  findAll(workspaceDto: SearchWorkspaceDto): Promise<WorkspaceDocument[]> {
-    return this.workspaceModel.find(workspaceDto).exec()
+  findAll(user: Partial<User>) {
+    return this.prisma.workspaces.findMany({
+      where: {
+        owner: user.id,
+      },
+    })
   }
 
-  findOne(id: ObjectId): Promise<WorkspaceDocument> {
-    return this.workspaceModel.findById(id).exec()
+  findOne(id: string) {
+    return this.prisma.workspaces.findUniqueOrThrow({
+      where: {
+        id,
+      },
+    })
   }
 
-  update(id: ObjectId, updateWorkspaceDto: UpdateWorkspaceDto): Promise<WorkspaceDocument> {
-    return this.workspaceModel
-      .findOneAndUpdate(
-        {
-          _id: id,
-        },
-        updateWorkspaceDto,
-      )
-      .exec()
+  update(id: string, updateWorkspaceDto: UpdateWorkspaceDto) {
+    return this.prisma.workspaces.update({
+      where: {
+        id,
+      },
+      data: {
+        ...updateWorkspaceDto,
+      },
+    })
   }
 
-  async remove(id: ObjectId) {
-    return this.workspaceModel
-      .findOneAndRemove({
-        _id: id,
-      })
-      .exec()
+  async remove(id: string) {
+    return this.prisma.workspaces.delete({
+      where: {
+        id,
+      },
+    })
   }
 }
