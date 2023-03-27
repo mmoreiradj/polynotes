@@ -3,20 +3,49 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model users {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-  email String @unique
-  password String
-  active Boolean @default(false)
+model User {
+  id        Int         @id @default(autoincrement())
+  name      String
+  email     String      @unique
+  password  String
+  active    Boolean     @default(false)
+  File      File[]
+
+  @@map("users")
 }
 
-model workspaces {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-  owner String @db.ObjectId
+model File {
+  id           Int      @id @default(autoincrement())
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+  lastAccessed DateTime @default(now())
+  isDirectory  Boolean  @default(false)
+
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  parentId Int?  @map("parent_id")
+  parent   File? @relation("FolderChildren", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  children File[] @relation("FolderChildren")
+
+  content Block[]
+
+  @@map("files")
+}
+
+model Block {
+  id      Int    @id @default(autoincrement())
+  kind    String
+  content String @default("")
+
+  fileId Int  @map("file_id")
+  file   File @relation(fields: [fileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("blocks")
 }
