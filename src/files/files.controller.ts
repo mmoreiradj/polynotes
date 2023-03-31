@@ -1,25 +1,26 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query } from '@nestjs/common'
-import { User } from '@prisma/client'
 import { GetUser } from 'src/common/shared/decorators/get-user.decorator'
-import { CreateFileDto } from '../dto/create-file.dto'
-import { FilesService } from '../services/files.service'
+import { UserDocument } from 'src/schema/user.schema'
+import { CreateFileDto } from './dto/create-file.dto'
+import { UpdateFileDto } from './dto/update-file.dto'
+import { FilesService } from './files.service'
 
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
   @Get('')
-  findAll(@GetUser() user: User, @Query('parent_id') parentId: number | undefined) {
+  findAll(@GetUser() user: UserDocument, @Query('parent_id') parentId?: string) {
     return this.filesService.findMany(user.id, parentId)
   }
 
   @Post('')
-  createOne(@GetUser() user: User, @Body() createFileDto: CreateFileDto) {
+  createOne(@GetUser() user: UserDocument, @Body() createFileDto: CreateFileDto) {
     return this.filesService.createOne(user.id, createFileDto)
   }
 
   @Get(':id')
-  async findOne(@GetUser() user: User, @Param('id') id: number) {
+  async findOne(@GetUser() user: UserDocument, @Param('id') id: string) {
     const file = await this.filesService.findOne(id)
     if (file.userId !== user.id) {
       throw new NotFoundException()
@@ -28,12 +29,12 @@ export class FilesController {
   }
 
   @Patch(':id')
-  updateOne(@GetUser() user: User, @Param('id') id: number, @Body() data: CreateFileDto) {
-    return this.filesService.updateOne(user.id, id, data)
+  updateOne(@GetUser() user: UserDocument, @Param('id') id: string, @Body() data: UpdateFileDto) {
+    return this.filesService.updateOne(id, user.id, data)
   }
 
   @Delete(':id')
-  deleteOne(@GetUser() user: User, @Param('id') id: number) {
+  deleteOne(@GetUser() user: UserDocument, @Param('id') id: string) {
     return this.filesService.deleteOne(user.id, id)
   }
 }

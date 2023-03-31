@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { APP_GUARD } from '@nestjs/core'
+import { MongooseModule } from '@nestjs/mongoose'
 import { AuthModule } from './common/auth/auth.module'
 import { MailModule } from './common/mail/mail.module'
-import { PrismaModule } from './common/prisma/prisma.module'
 import { JwtAuthGuard } from './common/shared/guards/jwt-auth.guard'
-import { CoreModule } from './core/core.module'
+import { UsersModule } from './users/users.module'
+import { FilesModule } from './files/files.module'
 
 @Module({
   imports: [
@@ -13,10 +14,13 @@ import { CoreModule } from './core/core.module'
       envFilePath: ['.env.dev.local', '.env.dev', '.env'],
       isGlobal: true,
     }),
+    MongooseModule.forRoot(
+      'mongodb+srv://martinmoreiradj:EV51LUhtZrgclHdx@polynotes.jitim8w.mongodb.net/?retryWrites=true&w=majority',
+    ),
     AuthModule,
-    PrismaModule,
     MailModule,
-    CoreModule,
+    UsersModule,
+    FilesModule,
   ],
   providers: [
     {

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { MailerService } from '@nestjs-modules/mailer'
 import { ConfigService } from '@nestjs/config'
-import { User } from '@prisma/client'
+import { UserDocument } from 'src/schema/user.schema'
 
 @Injectable()
 export class MailService {
   constructor(private readonly mailerService: MailerService, private readonly configService: ConfigService) {}
 
-  async sendRegistrationMail(user: User, token: string) {
+  async sendRegistrationMail(user: UserDocument, token: string) {
     const to =
       this.configService.getOrThrow('NODE_ENV') === 'production'
         ? user.email

@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common'
-import { User } from '@prisma/client'
+import { UserDocument } from 'src/schema/user.schema'
 import { GetUser } from '../shared/decorators/get-user.decorator'
 import { Public } from '../shared/decorators/is-public.decorator'
 import { JwtMailGuard } from '../shared/guards/jwt-mail.guard'
@@ -24,7 +24,7 @@ export class AuthController {
 
   @UseGuards(JwtMailGuard)
   @Post('validate')
-  validate(@GetUser() user: User) {
+  validate(@GetUser() user: UserDocument) {
     return this.authService.validate(user)
   }
 

@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import { User } from '@prisma/client'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 import * as argon from 'argon2'
-import { UsersService } from 'src/core/services/users.service'
+import { UserDocument } from 'src/schema/user.schema'
+import { UsersService } from 'src/users/users.service'
 import { MailService } from '../mail/mail.service'
 import { JWTPayload } from '../shared/types'
 import { CreateUserDto } from './dto/create-user.dto'
@@ -76,7 +76,7 @@ export class AuthService {
     }
   }
 
-  async validate(user: User) {
+  async validate(user: UserDocument) {
     const updatedUser = await this.usersService.activate(user.id)
 
     if (!updatedUser) {
@@ -102,7 +102,7 @@ export class AuthService {
     }
   }
 
-  async sendMail(user: User) {
+  async sendMail(user: UserDocument) {
     const payload = { sub: user.id }
 
     const token = this.jwtService.sign(payload, {
