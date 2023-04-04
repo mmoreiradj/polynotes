@@ -13,6 +13,9 @@ export class Block {
 
   @Prop({ type: Array })
   blocks: any[]
+
+  @Prop({ type: Object })
+  meta?: any
 }
 
 export const BlockSchema = SchemaFactory.createForClass(Block)

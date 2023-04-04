@@ -7,6 +7,7 @@ import { MailModule } from './common/mail/mail.module'
 import { JwtAuthGuard } from './common/shared/guards/jwt-auth.guard'
 import { UsersModule } from './users/users.module'
 import { FilesModule } from './files/files.module'
+import { DatabasesModule } from './databases/databases.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { FilesModule } from './files/files.module'
     MailModule,
     UsersModule,
     FilesModule,
+    DatabasesModule,
   ],
   providers: [
     {
