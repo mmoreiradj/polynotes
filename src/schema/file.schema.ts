@@ -19,6 +19,9 @@ export class _File {
   @Prop({ default: Date.now })
   updatedAt!: Date
 
+  @Prop({ default: Date.now })
+  lastAccessed!: Date
+
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   userId: User
 

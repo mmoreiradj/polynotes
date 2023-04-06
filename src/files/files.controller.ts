@@ -19,12 +19,18 @@ export class FilesController {
     return this.filesService.createOne(user.id, createFileDto)
   }
 
+  @Get('recent')
+  findRecent(@GetUser() user: UserDocument, @Query('limit') limit = 10) {
+    return this.filesService.findRecent(user.id, limit)
+  }
+
   @Get(':id')
   async findOne(@GetUser() user: UserDocument, @Param('id') id: string) {
     const file = await this.filesService.findOne(id)
     if (file.userId !== user.id) {
       throw new NotFoundException()
     }
+    this.filesService.markAsRead(id, userId)
     return file
   }
 

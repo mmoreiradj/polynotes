@@ -17,12 +17,39 @@ export class FilesService {
     return file.save()
   }
 
+  markAsRead(fileId: string, userId: number) {
+    return this.fileModel
+      .findOneAndUpdate(
+        {
+          userId,
+          _id: fileId,
+        },
+        {
+          $set: {
+            lastAccessed: new Date(),
+          },
+        },
+      )
+      .exec()
+  }
+
   findMany(userId: string, parentId?: string): Promise<FileDocument[]> {
     return this.fileModel
       .find({
         userId,
         parentId,
       })
+      .select('-blocks')
+      .exec()
+  }
+
+  findRecent(userId: string, limit: number): Promise<FileDocument[]> {
+    return this.fileModel
+      .find({
+        userId,
+      })
+      .sort({ lastAccessed: -1 })
+      .limit(limit)
       .select('-blocks')
       .exec()
   }
