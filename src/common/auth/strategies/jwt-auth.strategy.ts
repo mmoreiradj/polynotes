@@ -8,13 +8,18 @@ import { JWTPayload } from 'src/common/shared/types'
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-auth') {
   constructor(readonly configService: ConfigService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request) => {
+          return request?.cookies?.access_token ?? null
+        },
+      ]),
       ignoreExpiration: false,
       secretOrKey: configService.getOrThrow('JWT_SECRET'),
     })
   }
 
   async validate(payload: JWTPayload) {
+    if (!payload) return null
     return { sub: payload.sub, name: payload.name, email: payload.email }
   }
 }
