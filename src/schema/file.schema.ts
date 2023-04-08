@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument, Types } from 'mongoose'
-import { BlockDocument, BlockSchema } from './block.schema'
 import { User } from './user.schema'
 
 export type FileDocument = HydratedDocument<_File>
@@ -12,6 +11,9 @@ export class _File {
 
   @Prop({ type: Boolean, default: false, required: true })
   isDirectory: boolean
+
+  @Prop({ type: String, default: 'none', required: false })
+  accessLevel: string
 
   @Prop({ default: Date.now })
   createdAt!: Date

@@ -58,8 +58,17 @@ export class FilesService {
     return this.fileModel.findById(id).orFail().exec()
   }
 
-  updateOne(id: string, userId: string, updateFileDto: UpdateFileDto) {
-    return this.fileModel.findOneAndUpdate({ _id: id, userId }, updateFileDto).setOptions({ new: true }).orFail().exec()
+  updateAccess(id: string, userId: string, accessLevel: 'r' | 'w' | 'none') {
+    return this.fileModel
+      .findOneAndUpdate({ _id: id, userId }, { accessLevel: accessLevel })
+      .setOptions({ new: true })
+      .select('-blocks')
+      .orFail()
+      .exec()
+  }
+
+  updateOne(id: string, updateFileDto: UpdateFileDto) {
+    return this.fileModel.findOneAndUpdate({ _id: id }, updateFileDto).setOptions({ new: true }).orFail().exec()
   }
 
   deleteOne(userId: string, fileId: string) {

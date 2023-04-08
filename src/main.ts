@@ -5,7 +5,9 @@ import { ConfigService } from '@nestjs/config'
 import * as cookieParser from 'cookie-parser'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule, {
+    logger: ['debug', 'error', 'log', 'verbose', 'warn'],
+  })
   const configService = app.get(ConfigService)
   const PORT = configService.getOrThrow('PORT')
   const CORS_ORIGIN = configService.getOrThrow('CORS_ORIGIN')
