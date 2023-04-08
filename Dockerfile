@@ -8,8 +8,6 @@ RUN npm install
 
 COPY . .
 
-RUN npx prisma generate --schema prisma/schema.prisma
-
 EXPOSE 3000
 
 CMD [ "npm", "run", "start:dev" ]
@@ -30,9 +28,9 @@ COPY . .
 
 WORKDIR /usr/src/app
 
-RUN npm run build
-
 ENV NODE_ENV production
+
+RUN npm run build
 
 RUN npm ci --only=production && npm cache clean --force
 

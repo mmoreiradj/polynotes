@@ -1,19 +1,18 @@
 image: node:16
 
 stages:
-  - local-build
   - test
-  - image-build-push
-  - kube-rollout
+  - build
+  - deploy
 
-build-npm:
+test:
   stage: test
   script:
     - npm install
     - npm run lint
 
-build-img:
-  stage: image-build-push
+build:
+  stage: build
   image: docker:20.10.16
   variables:
     DOCKER_HOST: tcp://docker:2376
@@ -31,8 +30,8 @@ build-img:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_BUILD_TOKEN" "$CI_REGISTRY"
     - docker push "$CI_REGISTRY_IMAGE"
 
-deploy-on-kube:
-  stage: kube-rollout
+deploy:
+  stage: deploy
   image: 
     name: bitnami/kubectl:latest
     entrypoint: ['']
