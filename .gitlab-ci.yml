@@ -7,16 +7,9 @@ stages:
   - kube-rollout
 
 build-npm:
-  stage: local-build
-  script:
-    - npm install
-  artifacts:
-    paths:
-      - node_modules/
-
-test-lint:
   stage: test
   script:
+    - npm install
     - npm run lint
 
 build-img:
