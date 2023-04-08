@@ -10,6 +10,7 @@ data:
   PORT: '3000'
   SMTP_HOST: 'smtp.umontpellier.fr'
   SMTP_PORT: '587'
+  COOKIE_DOMAIN: 'polynotes.cluster-2022-7.dopolytech.fr'
 
 ---
 
