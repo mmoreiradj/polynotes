@@ -19,7 +19,7 @@ import { HealthModule } from './common/health/health.module'
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService) => ({
-        uri: configService.getOrThrow('MONGO_URI'),
+        uri: configService.getOrThrow('MONGO_URL'),
       }),
       inject: [ConfigService],
     }),
