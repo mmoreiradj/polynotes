@@ -1,19 +1,28 @@
 image: node:16
 
 stages:
+  - npm-install
   - test
   - build
   - deploy
 
+install:
+  stage: npm-install
+  script:
+    - npm install
+  artifacts:
+    paths:
+      - node_modules
+    expire_in: "1 hour"
+
 test:
   stage: test
   script:
-    - npm install
     - npm run lint
 
 build:
   stage: build
-  image: docker:20.10.16
+  image: docker:19.03.5
   variables:
     DOCKER_HOST: tcp://docker:2376
     DOCKER_TLS_CERTDIR: "/certs"
@@ -21,7 +30,7 @@ build:
     DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
 
   services:
-    - docker:20.10.16-dind
+    - docker:19.03.5-dind
 
   before_script:
     - until docker info; do sleep 1; done
