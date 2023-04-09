@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { APP_GUARD } from '@nestjs/core'
 import { MongooseModule } from '@nestjs/mongoose'
 import { AuthModule } from './common/auth/auth.module'
@@ -8,6 +8,7 @@ import { JwtAuthGuard } from './common/shared/guards/jwt-auth.guard'
 import { UsersModule } from './users/users.module'
 import { FilesModule } from './files/files.module'
 import { DatabasesModule } from './databases/databases.module'
+import { HealthModule } from './common/health/health.module'
 
 @Module({
   imports: [
@@ -15,14 +16,19 @@ import { DatabasesModule } from './databases/databases.module'
       envFilePath: ['.env.dev.local', '.env.dev', '.env'],
       isGlobal: true,
     }),
-    MongooseModule.forRoot(
-      'mongodb+srv://martinmoreiradj:EV51LUhtZrgclHdx@polynotes.jitim8w.mongodb.net/?retryWrites=true&w=majority',
-    ),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService) => ({
+        uri: configService.getOrThrow('MONGO_URI'),
+      }),
+      inject: [ConfigService],
+    }),
     AuthModule,
     MailModule,
     UsersModule,
     FilesModule,
     DatabasesModule,
+    HealthModule,
   ],
   providers: [
     {

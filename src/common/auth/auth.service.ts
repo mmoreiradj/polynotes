@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 import * as argon from 'argon2'
 import { UserDocument } from 'src/schema/user.schema'
 import { UsersService } from 'src/users/users.service'
@@ -53,27 +52,16 @@ export class AuthService {
   }
 
   async register(registerDto: CreateUserDto) {
-    try {
-      const hashedPassword = await argon.hash(registerDto.password)
-      registerDto.password = hashedPassword
+    const hashedPassword = await argon.hash(registerDto.password)
+    registerDto.password = hashedPassword
 
-      const user = await this.usersService.create(registerDto)
+    const user = await this.usersService.create(registerDto)
 
-      delete user.password
+    delete user.password
 
-      this.sendMail(user)
+    this.sendMail(user)
 
-      return user
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
-        throw new BadRequestException({
-          code: 'PN1',
-          field: 'email',
-          message: 'Email already taken',
-        })
-      }
-      throw error
-    }
+    return user
   }
 
   async validate(user: UserDocument) {
@@ -89,17 +77,10 @@ export class AuthService {
   }
 
   async resendMail(email: string) {
-    try {
-      const user = await this.usersService.findByEmail(email)
-      if (user.active) return
-      this.sendMail(user)
-      return
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
-        return
-      }
-      throw error
-    }
+    const user = await this.usersService.findByEmail(email)
+    if (user.active) return
+    this.sendMail(user)
+    return
   }
 
   async sendMail(user: UserDocument) {
