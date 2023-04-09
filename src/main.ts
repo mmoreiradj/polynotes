@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { ConfigService } from '@nestjs/config'
 import * as cookieParser from 'cookie-parser'
+import { MongoExceptionFilter } from './common/shared/filters/mongo-exception.filter'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -20,6 +21,8 @@ async function bootstrap() {
       whitelist: true,
     }),
   )
+
+  app.useGlobalFilters(new MongoExceptionFilter())
 
   app.setGlobalPrefix('/v0')
 
