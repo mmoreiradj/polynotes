@@ -40,6 +40,8 @@ RUN npm ci --only=production && npm cache clean --force
 
 FROM node:16.20 AS production
 
+ENV NODE_ENV production
+
 COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist
 
