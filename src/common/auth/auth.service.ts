@@ -52,12 +52,27 @@ export class AuthService {
   }
 
   async register(registerDto: CreateUserDto) {
+    try {
+      const alreadyExistingUser = await this.usersService.findByEmail(registerDto.email)
+      if (alreadyExistingUser) {
+        throw new BadRequestException({
+          code: 'PN1',
+          field: 'email',
+          message: 'User with that email already exists',
+        })
+      }
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error
+      }
+    }
+
     const hashedPassword = await argon.hash(registerDto.password)
     registerDto.password = hashedPassword
 
     const user = await this.usersService.create(registerDto)
 
-    delete user.password
+    user.password = undefined
 
     this.sendMail(user)
 
