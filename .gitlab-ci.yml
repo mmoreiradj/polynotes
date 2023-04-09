@@ -22,7 +22,7 @@ test:
 
 build:
   stage: build
-  image: docker:19.03.5
+  image: docker:20.10.16
   variables:
     DOCKER_HOST: tcp://docker:2376
     DOCKER_TLS_CERTDIR: "/certs"
@@ -30,7 +30,7 @@ build:
     DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
 
   services:
-    - docker:19.03.5-dind
+    - docker:20.10.16-dind
 
   before_script:
     - until docker info; do sleep 1; done
