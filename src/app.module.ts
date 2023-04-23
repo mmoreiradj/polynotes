@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module'
 import { FilesModule } from './files/files.module'
 import { DatabasesModule } from './databases/databases.module'
 import { HealthModule } from './common/health/health.module'
+import { FormsModule } from './forms/forms.module'
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { HealthModule } from './common/health/health.module'
     FilesModule,
     DatabasesModule,
     HealthModule,
+    FormsModule,
   ],
   providers: [
     {

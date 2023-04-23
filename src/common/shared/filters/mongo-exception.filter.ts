@@ -7,31 +7,32 @@ export class MongoExceptionFilter implements ExceptionFilter {
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp()
 
-    let statusCode: number
-    let errorCode: string
-    let message: string
-    const field = ''
+    const errorObject: { [key: string]: number | string } = {}
 
     switch (exception.name) {
-      case 'CastError':
-        statusCode = 400
-        message = 'The provided id is not valid'
+      case Error.CastError.name:
+        errorObject.statusCode = 400
+        errorObject.message = 'The provided id is not valid'
         break
-      case 'DocumentNotFoundError':
-        statusCode = 404
-        message = 'The requested resource was not found'
+      case Error.DocumentNotFoundError.name:
+        errorObject.statusCode = 404
+        errorObject.message = 'The requested resource was not found'
+        break
+      case Error.ValidationError.name:
+        errorObject.statusCode = 400
+        errorObject.message = 'The provided id is not valid'
+        const validationException = exception as Error.ValidationError
+        Object.keys(validationException.errors).forEach((key) => {
+          errorObject[key] = validationException.errors[key].message
+        })
+        break
       default:
-        statusCode = 500
-        message = 'Internal server error'
+        errorObject.statusCode = 500
+        errorObject.message = 'Internal server error'
     }
 
     const response = ctx.getResponse<Response>()
 
-    response.status(statusCode).send({
-      statusCode,
-      errorCode,
-      message,
-      field: field ?? undefined,
-    })
+    response.status(errorObject.statusCode ?? 500).send(errorObject)
   }
 }
