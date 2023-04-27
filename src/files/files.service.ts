@@ -1,13 +1,19 @@
+import { FormsService } from './../forms/forms.service'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import { FileDocument } from 'src/schema/file.schema'
 import { CreateFileDto } from './dto/create-file.dto'
 import { UpdateFileDto } from './dto/update-file.dto'
+import { Block, BlockKind } from 'src/schema/block.schema'
+import { AccessLevel } from 'src/forms/schema/form.schema'
 
 @Injectable()
 export class FilesService {
-  constructor(@InjectModel('File') private readonly fileModel: Model<FileDocument>) {}
+  constructor(
+    @InjectModel('File') private readonly fileModel: Model<FileDocument>,
+    private readonly formsService: FormsService,
+  ) {}
 
   createOne(userId: string, createFileDto: CreateFileDto): Promise<FileDocument> {
     const file = new this.fileModel({
@@ -58,13 +64,22 @@ export class FilesService {
     return this.fileModel.findById(id).orFail().exec()
   }
 
-  updateAccess(id: string, userId: string, accessLevel: 'r' | 'w' | 'none') {
-    return this.fileModel
+  async updateAccess(id: string, userId: string, accessLevel: AccessLevel) {
+    const file = await this.fileModel
       .findOneAndUpdate({ _id: id, userId }, { accessLevel: accessLevel })
       .setOptions({ new: true })
-      .select('-blocks')
       .orFail()
       .exec()
+
+    const formsToUpdate = file.blocks.filter((block: Block) => block.kind === BlockKind.FORM)
+
+    await Promise.all(
+      formsToUpdate.map(async (block: Block) => {
+        await this.formsService.updateAccessLevel(block.content, accessLevel, userId)
+      }),
+    )
+
+    return file
   }
 
   updateOne(id: string, updateFileDto: UpdateFileDto) {

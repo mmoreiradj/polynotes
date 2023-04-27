@@ -7,6 +7,7 @@ import { FilesService } from './files.service'
 import { JwtAuthGuard } from 'src/common/shared/guards/jwt-auth.guard'
 import { OptionalJwtAuthGuard } from 'src/common/shared/guards/optional-jwt-auth.guard'
 import { OptionalAuth } from 'src/common/shared/decorators/is-optional-auth.decorator'
+import { AccessLevel } from 'src/forms/schema/form.schema'
 
 @Controller('files')
 export class FilesController {
@@ -46,11 +47,7 @@ export class FilesController {
   }
 
   @Patch(':id/access-level')
-  updateAccess(
-    @GetUser() user: UserDocument,
-    @Param('id') id: string,
-    @Body('accessLevel') accessLevel: 'r' | 'w' | 'none',
-  ) {
+  updateAccess(@GetUser() user: UserDocument, @Param('id') id: string, @Body('accessLevel') accessLevel: AccessLevel) {
     return this.filesService.updateAccess(id, user.id, accessLevel)
   }
 
