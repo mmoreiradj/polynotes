@@ -20,7 +20,7 @@ export class MongoExceptionFilter implements ExceptionFilter {
         break
       case Error.ValidationError.name:
         errorObject.statusCode = 400
-        errorObject.message = 'The provided id is not valid'
+        errorObject.message = 'Validation error'
         const validationException = exception as Error.ValidationError
         Object.keys(validationException.errors).forEach((key) => {
           errorObject[key] = validationException.errors[key].message
