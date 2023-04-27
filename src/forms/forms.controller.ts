@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, Delete, Get, Patch } from '@nestjs/common'
+import { Controller, Post, Body, Param, Delete, Get, Patch, UseGuards } from '@nestjs/common'
 import { FormsService } from './forms.service'
 import { GetUser } from 'src/common/shared/decorators/get-user.decorator'
 import { CreateFormDto } from './dto/create-form.dto'
@@ -6,6 +6,8 @@ import { JwtUser } from 'src/common/shared/types'
 import { UpdateFormDto } from './dto/update-form.dto'
 import { FieldsService } from './fields/fields.service'
 import { MoveFieldDto } from './fields/dto/swap-fields.dto'
+import { OptionalAuth } from 'src/common/shared/decorators/is-optional-auth.decorator'
+import { OptionalJwtAuthGuard } from 'src/common/shared/guards/optional-jwt-auth.guard'
 
 @Controller('forms')
 export class FormsController {
@@ -21,6 +23,8 @@ export class FormsController {
     return this.formsService.findAll(user.id)
   }
 
+  @OptionalAuth()
+  @UseGuards(OptionalJwtAuthGuard)
   @Get(':id')
   async findOne(@GetUser() user: JwtUser, @Param('id') id: string) {
     const form = await this.formsService.findOne(id)
