@@ -53,6 +53,22 @@ export class FormsService {
     return form.save()
   }
 
+  updateAccessLevel(id: string, accessLevel: AccessLevel, userId: string) {
+    return this.formModel.updateOne(
+      {
+        _id: id,
+        owner: userId,
+      },
+      {
+        accessLevel,
+      },
+      {
+        runValidators: true,
+        new: true,
+      },
+    )
+  }
+
   async remove(id: string, userId?: string | undefined) {
     const form = await this.findOne(id)
 
