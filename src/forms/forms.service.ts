@@ -22,7 +22,7 @@ export class FormsService {
       ],
     })
 
-    form.validateSync()
+    await form.validate()
 
     return form.save()
   }
@@ -48,7 +48,7 @@ export class FormsService {
 
     form.set(updateFormDto)
 
-    form.validateSync()
+    await form.validate()
 
     return form.save()
   }

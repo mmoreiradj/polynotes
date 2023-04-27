@@ -4,10 +4,8 @@ import { FormsService } from '../forms.service'
 import { AccessLevel, Form, FormDocument } from '../schema/form.schema'
 import { FormFieldDocument, FormFieldKind } from '../schema/form-field.schema'
 import { UpdateFieldDto } from './dto/update-field.dto'
-import { MoveFieldDto } from './dto/swap-fields.dto'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-import { log } from 'console'
 
 @Injectable()
 export class FieldsService {
@@ -85,7 +83,7 @@ export class FieldsService {
       form.fields[foundIndex].options = undefined
     }
 
-    form.validateSync()
+    await form.validate()
 
     return (await form.save()).fields
   }
