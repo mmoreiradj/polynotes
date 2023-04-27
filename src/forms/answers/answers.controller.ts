@@ -17,7 +17,7 @@ export class AnswersController {
   }
 
   @Get('forms/:form_id/fields/:field_id/answers')
-  getAnswersForFIeld(
+  getAnswersForField(
     @Param('form_id') formId: string,
     @Param('field_id') fieldId: string,
     @GetUser() user: JwtUser,

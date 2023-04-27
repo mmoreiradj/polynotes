@@ -4,7 +4,6 @@ import { CreateFieldDto } from './dto/create-field.dto'
 import { UpdateFieldDto } from './dto/update-field.dto'
 import { GetUser } from 'src/common/shared/decorators/get-user.decorator'
 import { JwtUser } from 'src/common/shared/types'
-import { log } from 'console'
 import { MoveFieldDto } from './dto/swap-fields.dto'
 
 @Controller('forms/:form_id/fields')
@@ -23,7 +22,6 @@ export class FieldsController {
     @GetUser() user: JwtUser,
     @Body() updateFieldDto: UpdateFieldDto,
   ) {
-    log('updateFieldDto', updateFieldDto)
     return this.fieldsService.update(formId, fieldId, updateFieldDto, user.id)
   }
 

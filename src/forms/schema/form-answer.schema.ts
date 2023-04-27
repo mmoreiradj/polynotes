@@ -5,7 +5,7 @@ import { FormFieldAnswer, FormFieldAnswerSchema } from './form-field-answer.sche
 
 export type FormAnswerDocument = HydratedDocument<FormAnswer>
 
-@Schema()
+@Schema({ timestamps: true })
 export class FormAnswer {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Form.name, required: true })
   form: Form

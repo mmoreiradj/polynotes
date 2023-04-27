@@ -48,6 +48,12 @@ export class AnswersService {
       })
       .exec()
       .then((result) => {
+        if (result.length === 0) {
+          return {
+            count: 0,
+            answers: [],
+          }
+        }
         return {
           count: result[0].count,
           answers: result[0].answers,
@@ -149,6 +155,12 @@ export class AnswersService {
       })
       .exec()
       .then((result) => {
+        if (result[0].count?.length === 0) {
+          return {
+            count: 0,
+            answers: [],
+          }
+        }
         return {
           count: result[0].count[0],
           answers: result[0].answers,

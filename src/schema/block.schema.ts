@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
-import { AccessLevel } from 'src/forms/schema/form.schema'
 
 export type BlockDocument = HydratedDocument<Block>
 
