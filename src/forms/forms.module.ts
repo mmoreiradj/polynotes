@@ -24,5 +24,6 @@ import { FormAnswer, FormAnswerSchema } from './schema/form-answer.schema'
   ],
   controllers: [FormsController, FieldsController, AnswersController],
   providers: [FormsService, FieldsService, AnswersService],
+  exports: [FormsService],
 })
 export class FormsModule {}

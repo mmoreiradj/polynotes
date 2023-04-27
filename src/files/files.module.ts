@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import { FileSchema } from 'src/schema/file.schema'
-import { BlocksModule } from './blocks/block.module'
 import { FilesController } from './files.controller'
 import { FilesService } from './files.service'
+import { BlocksController } from './blocks/block.controller'
+import { BlocksService } from './blocks/block.service'
+import { FormsModule } from 'src/forms/forms.module'
 
 @Module({
   imports: [
@@ -13,9 +15,9 @@ import { FilesService } from './files.service'
         schema: FileSchema,
       },
     ]),
-    BlocksModule,
+    FormsModule,
   ],
-  controllers: [FilesController],
-  providers: [FilesService],
+  controllers: [FilesController, BlocksController],
+  providers: [FilesService, BlocksService],
 })
 export class FilesModule {}
