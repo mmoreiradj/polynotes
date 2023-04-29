@@ -6,7 +6,7 @@ import { FormField, FormFieldSchema } from './form-field.schema'
 export enum AccessLevel {
   PUBLIC_READ = 'r',
   PUBLIC_WRITE = 'w',
-  PRIVATE = 'none',
+  PRIVATE = 'private',
 }
 
 export type FormDocument = HydratedDocument<Form>
@@ -16,10 +16,7 @@ export class Form {
   @Prop({ type: String, required: true, maxlength: 30 })
   name: string
 
-  @Prop({ type: String, required: false, maxlength: 255 })
-  description: string
-
-  @Prop({ type: String, enum: Object.values(AccessLevel), default: 'none' })
+  @Prop({ type: String, enum: Object.values(AccessLevel), default: AccessLevel.PRIVATE })
   accessLevel: AccessLevel
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name, required: true })
