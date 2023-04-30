@@ -1,0 +1,1 @@
+{"_id":{"$oid":"644e6850931391e667ce094e"},"name":"Lapin Malin","email":"lapin.malin@carotte.fr","password":"$argon2id$v=19$m=65536,t=3,p=4$gvkcs77eqIhFiLFOTpgFPQ$WsKHnqDVdnTPlzn6E/AfwgdwrKNWvnRZYy/8cGHaCMg","active":true,"__v":0}
