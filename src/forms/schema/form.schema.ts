@@ -13,9 +13,6 @@ export type FormDocument = HydratedDocument<Form>
 
 @Schema()
 export class Form {
-  @Prop({ type: String, required: true, maxlength: 30 })
-  name: string
-
   @Prop({ type: String, enum: Object.values(AccessLevel), default: AccessLevel.PRIVATE })
   accessLevel: AccessLevel
 
