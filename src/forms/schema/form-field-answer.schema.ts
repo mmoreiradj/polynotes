@@ -11,6 +11,9 @@ export class FormFieldAnswer {
 
   @Prop({ type: String, required: true })
   value: string
+
+  @Prop({ type: Number, required: false })
+  version: number
 }
 
 export const FormFieldAnswerSchema = SchemaFactory.createForClass(FormFieldAnswer)

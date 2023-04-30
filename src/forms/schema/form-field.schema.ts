@@ -60,6 +60,9 @@ export class FormField {
     ],
   })
   options?: string[]
+
+  @Prop({ type: Number, default: 0 })
+  version: number
 }
 
 export const FormFieldSchema = SchemaFactory.createForClass(FormField)

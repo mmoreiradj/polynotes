@@ -73,10 +73,22 @@ export class FieldsService {
     }
 
     const field = form.fields[foundIndex] as FormFieldDocument
+    let version = field.version
+    if (updateFieldDto.formField.kind !== undefined && updateFieldDto.formField.kind !== field.kind) {
+      if (
+        !(
+          (updateFieldDto.formField.kind === FormFieldKind.SELECT && field.kind === FormFieldKind.TINYTEXT) ||
+          (updateFieldDto.formField.kind === FormFieldKind.TINYTEXT && field.kind === FormFieldKind.SELECT)
+        )
+      ) {
+        ++version
+      }
+    }
 
     form.fields[foundIndex] = {
       ...field.toObject(),
       ...updateFieldDto.formField,
+      version,
     }
 
     if (updateFieldDto.formField.kind !== FormFieldKind.SELECT) {

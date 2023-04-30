@@ -84,7 +84,7 @@ export class AnswersService {
 
       ;(form.fields as FormFieldDocument[]).forEach((field) => fieldSet.set(field._id.toString(), field))
 
-      for (const answer of formAnswer.answers) {
+      formAnswer.answers = formAnswer.answers.map((answer) => {
         const field = fieldSet.get(answer.formField.toString())
 
         if (!field) {
@@ -98,7 +98,11 @@ export class AnswersService {
         if (field.kind === FormFieldKind.INTEGER && isNaN(parseInt(answer.value))) {
           throw new BadRequestException(`Invalid answer for field ${field.label}`)
         }
-      }
+
+        answer.version = field.version
+
+        return answer
+      })
 
       return formAnswer.save()
     } catch (error) {
@@ -117,17 +121,20 @@ export class AnswersService {
       throw new NotFoundException()
     }
 
-    const field = (form.fields as FormFieldDocument[]).filter((field) => field._id)
+    const found = (form.fields as FormFieldDocument[]).filter((field) => field._id)
 
-    if (!field) {
+    if (!found) {
       throw new NotFoundException()
     }
+
+    const field = found[0]
 
     return this.formAnswerModel
       .aggregate()
       .match({
         form: new mongoose.Types.ObjectId(formId),
         'answers.formField': new mongoose.Types.ObjectId(answerId),
+        'answers.version': field.version,
       })
       .project({
         answers: {
@@ -185,21 +192,22 @@ export class AnswersService {
     switch (field.kind) {
       case FormFieldKind.SELECT:
       case FormFieldKind.TINYTEXT:
-        return this.fieldStatsForTinyTextOrSelect(fieldId, offset, limit)
+        return this.fieldStatsForTinyTextOrSelect(fieldId, field.version, offset, limit)
       case FormFieldKind.TEXT:
-        return this.fieldStatsForText(fieldId, offset, limit)
+        return this.fieldStatsForText(fieldId, field.version, offset, limit)
       case FormFieldKind.INTEGER:
-        return this.fieldStatsForInteger(fieldId)
+        return this.fieldStatsForInteger(fieldId, field.version)
       default:
         throw new BadRequestException(`Unsupported field kind ${field.kind}`)
     }
   }
 
-  fieldStatsForText(fieldId: string, offset: number, limit: number) {
+  fieldStatsForText(fieldId: string, version: number, offset: number, limit: number) {
     return this.formAnswerModel
       .aggregate()
       .match({
         'answers.formField': new mongoose.Types.ObjectId(fieldId),
+        'answers.version': version,
       })
       .project({
         answers: {
@@ -277,11 +285,12 @@ export class AnswersService {
       })
   }
 
-  async fieldStatsForInteger(fieldId: string) {
+  async fieldStatsForInteger(fieldId: string, version: number) {
     return this.formAnswerModel
       .aggregate()
       .match({
         'answers.formField': new mongoose.Types.ObjectId(fieldId),
+        'answers.version': version,
       })
       .project({
         answers: {
@@ -409,11 +418,12 @@ export class AnswersService {
       })
   }
 
-  async fieldStatsForTinyTextOrSelect(fieldId: string, offset: number, limit: number) {
+  async fieldStatsForTinyTextOrSelect(fieldId: string, version: number, offset: number, limit: number) {
     return this.formAnswerModel
       .aggregate()
       .match({
         'answers.formField': new mongoose.Types.ObjectId(fieldId),
+        'answers.version': version,
       })
       .project({
         answers: {
