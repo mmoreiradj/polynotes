@@ -1,6 +1,6 @@
 ---
 - name: Install MongoDB on config nodes
-  hosts: mongos
+  hosts: mongos:config:shard1:shard2
   become: true
   become_user: root
   remote_user: root
