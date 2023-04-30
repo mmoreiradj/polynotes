@@ -6,7 +6,6 @@ import { FormAnswer, FormAnswerDocument } from '../schema/form-answer.schema'
 import mongoose, { Model, Error } from 'mongoose'
 import { FormFieldDocument, FormFieldKind } from '../schema/form-field.schema'
 import { FormFieldAnswer } from '../schema/form-field-answer.schema'
-import { log } from 'console'
 
 @Injectable()
 export class AnswersService {
@@ -177,7 +176,7 @@ export class AnswersService {
 
     const found = (form.fields as FormFieldDocument[]).filter((field) => field._id.toString() === fieldId)
 
-    if (!found) {
+    if (found.length === 0) {
       throw new NotFoundException()
     }
 
@@ -186,21 +185,20 @@ export class AnswersService {
     switch (field.kind) {
       case FormFieldKind.SELECT:
       case FormFieldKind.TINYTEXT:
-        return this.fieldStatsForTinyTextOrSelect(formId, fieldId, offset, limit)
+        return this.fieldStatsForTinyTextOrSelect(fieldId, offset, limit)
       case FormFieldKind.TEXT:
-        return this.fieldStatsForText(formId, fieldId, offset, limit)
+        return this.fieldStatsForText(fieldId, offset, limit)
       case FormFieldKind.INTEGER:
-        return this.fieldStatsForInteger(formId, fieldId)
+        return this.fieldStatsForInteger(fieldId)
       default:
         throw new BadRequestException(`Unsupported field kind ${field.kind}`)
     }
   }
 
-  fieldStatsForText(formId: string, fieldId: string, offset: number, limit: number) {
+  fieldStatsForText(fieldId: string, offset: number, limit: number) {
     return this.formAnswerModel
       .aggregate()
       .match({
-        form: new mongoose.Types.ObjectId(formId),
         'answers.formField': new mongoose.Types.ObjectId(fieldId),
       })
       .project({
@@ -279,11 +277,10 @@ export class AnswersService {
       })
   }
 
-  async fieldStatsForInteger(formId: string, fieldId: string) {
+  async fieldStatsForInteger(fieldId: string) {
     return this.formAnswerModel
       .aggregate()
       .match({
-        form: new mongoose.Types.ObjectId(formId),
         'answers.formField': new mongoose.Types.ObjectId(fieldId),
       })
       .project({
@@ -412,11 +409,10 @@ export class AnswersService {
       })
   }
 
-  async fieldStatsForTinyTextOrSelect(formId: string, fieldId: string, offset: number, limit: number) {
+  async fieldStatsForTinyTextOrSelect(fieldId: string, offset: number, limit: number) {
     return this.formAnswerModel
       .aggregate()
       .match({
-        form: new mongoose.Types.ObjectId(formId),
         'answers.formField': new mongoose.Types.ObjectId(fieldId),
       })
       .project({
