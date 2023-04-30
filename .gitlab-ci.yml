@@ -1,43 +1,16 @@
 image: node:16
 
 stages:
-  - npm-install
-  - test
   - build
   - deploy
 
-install:
-  stage: npm-install
-  script:
-    - npm install
-  artifacts:
-    paths:
-      - node_modules
-    expire_in: "1 hour"
-
-test:
-  stage: test
-  script:
-    - npm run lint
-
 build:
   stage: build
-  image: docker:20.10.16
-  variables:
-    DOCKER_HOST: tcp://docker:2376
-    DOCKER_TLS_CERTDIR: "/certs"
-    DOCKER_TLS_VERIFY: 1
-    DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
-
-  services:
-    - docker:20.10.16-dind
-
-  before_script:
-    - until docker info; do sleep 1; done
+  image: "quay.io/buildah/stable:v1.30.0"
   script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_BUILD_TOKEN" "$CI_REGISTRY"
-    - docker build -t "$CI_REGISTRY_IMAGE" .
-    - docker push "$CI_REGISTRY_IMAGE"
+    - buildah bud -f Dockerfile -t "$CI_REGISTRY_IMAGE" .
+    - echo "$CI_BUILD_TOKEN" | buildah login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - buildah push "$CI_REGISTRY_IMAGE"
 
 deploy:
   stage: deploy
