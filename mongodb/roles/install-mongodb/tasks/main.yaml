@@ -1,0 +1,24 @@
+---
+- name: Import Public Key
+  ansible.builtin.shell: |
+    curl -fsSL https://pgp.mongodb.com/server-6.0.pub | \
+      sudo apt-key add -
+
+- name: Create List File
+  ansible.builtin.shell: |
+    echo "deb [ arch=amd64,arm64 signed=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" \
+      | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+
+- name: Install MongoDB
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    allow_downgrades: yes
+  loop:
+    - mongodb-org=6.0.4
+    - mongodb-org-server=6.0.4
+    - mongodb-org-shell=6.0.4
+    - mongodb-org-mongos=6.0.4
+    - mongodb-org-tools=6.0.4
+ 

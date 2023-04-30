@@ -1,0 +1,17 @@
+[config]
+replSetConf1 ansible_host=192.168.121.9  ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/replSetConf1/libvirt/private_key
+replSetConf2 ansible_host=192.168.121.10 ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/replSetConf2/libvirt/private_key
+replSetConf3 ansible_host=192.168.121.11 ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/replSetConf3/libvirt/private_key
+
+[shard1]
+replSet1Node1 ansible_host=192.168.121.3 ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/replSet1Node1/libvirt/private_key
+replSet1Node2 ansible_host=192.168.121.4 ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/replSet1Node2/libvirt/private_key
+replSet1Node3 ansible_host=192.168.121.5 ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/replSet1Node3/libvirt/private_key
+
+[shard2]
+replSet2Node1 ansible_host=192.168.121.6 ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/replSet2Node1/libvirt/private_key
+replSet2Node2 ansible_host=192.168.121.7 ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/replSet2Node2/libvirt/private_key
+replSet2Node3 ansible_host=192.168.121.8 ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/replSet2Node3/libvirt/private_key
+
+[mongos]
+mongos ansible_host=192.168.121.2 ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/mongos/libvirt/private_key

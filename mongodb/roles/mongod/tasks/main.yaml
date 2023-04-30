@@ -1,0 +1,32 @@
+---
+- name: Add Secret
+  ansible.builtin.shell: |
+    mkdir -p /var/mongodb/pki
+    echo "{{ pki }}" > /var/mongodb/pki/keyfile
+    chmod 600 /var/mongodb/pki/keyfile
+    chown mongodb:mongodb /var/mongodb/pki/keyfile
+  notify:
+    - Restart MongoDB
+
+- name: Add Config
+  ansible.builtin.template:
+    src: mongod.conf.j2
+    dest: /etc/mongod.conf
+    owner: mongodb
+    group: mongodb
+    mode: "0600"
+  notify:
+    - Restart MongoDB
+
+- name: Set Permissions
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: mongodb
+    group: mongodb
+    recurse: yes
+  loop:
+    - /var/lib/mongodb
+    - /var/log/mongodb
+    - /var/mongodb-27017.sock
+  notify:
+    - Restart MongoDB

@@ -1,0 +1,100 @@
+---
+- name: Install MongoDB on config nodes
+  hosts: mongos
+  become: true
+  become_user: root
+  remote_user: root
+  roles:
+    - install-curl
+    - install-mongodb
+
+- name: Configure each config replicaset
+  hosts: config
+  become: true
+  become_user: root
+  remote_user: root
+  vars:
+    - repl_set_name: rsdo-conf
+    - cluster_role: configsvr
+  roles:
+    - mongod
+  vars_files:
+    - vars/main.yaml
+
+- name: Configure shard replicaset 1
+  hosts: shard1
+  become: true
+  become_user: root
+  remote_user: root
+  vars:
+    - repl_set_name: rsdo-sh1
+    - cluster_role: shardsvr
+  roles:
+    - mongod
+  vars_files:
+    - vars/main.yaml
+
+- name: Configure shard replicaset 2
+  hosts: shard2
+  become: true
+  become_user: root
+  remote_user: root
+  vars:
+    - repl_set_name: rsdo-sh2
+    - cluster_role: shardsvr
+  roles:
+    - mongod
+  vars_files:
+    - vars/main.yaml
+
+- name: Configure replica sets
+  hosts: config[0]
+  become: true
+  become_user: root
+  remote_user: root
+  roles:
+    - replicaset
+  vars:
+    - mongodb_replicaset_name: rsdo-conf
+    - mongodb_replicaset_member1: "{{ hostvars['replSetConf2']['ansible_host'] }}:27017"
+    - mongodb_replicaset_member2: "{{ hostvars['replSetConf3']['ansible_host'] }}:27017"
+  vars_files:
+    - vars/main.yaml
+
+- name: Configure replica sets
+  hosts: shard1[0]
+  become: true
+  become_user: root
+  remote_user: root
+  roles:
+    - replicaset
+  vars:
+    - mongodb_replicaset_name: rsdo-sh1
+    - mongodb_replicaset_member1: "{{ hostvars['replSet1Node2']['ansible_host'] }}:27017"
+    - mongodb_replicaset_member2: "{{ hostvars['replSet1Node3']['ansible_host'] }}:27017"
+  vars_files:
+    - vars/main.yaml
+
+- name: Configure replica sets
+  hosts: shard2[0]
+  become: true
+  become_user: root
+  remote_user: root
+  roles:
+    - replicaset
+  vars:
+    - mongodb_replicaset_name: rsdo-sh2
+    - mongodb_replicaset_member1: "{{ hostvars['replSet2Node2']['ansible_host'] }}:27017"
+    - mongodb_replicaset_member2: "{{ hostvars['replSet2Node3']['ansible_host'] }}:27017"
+  vars_files:
+    - vars/main.yaml
+
+- name: Configure mongos
+  hosts: mongos
+  become: true
+  become_user: root
+  remote_user: root
+  roles:
+    - mongos
+  vars_files:
+    - vars/main.yaml

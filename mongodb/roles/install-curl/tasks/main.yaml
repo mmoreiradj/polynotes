@@ -1,0 +1,6 @@
+---
+- name: Install curl
+  ansible.builtin.apt:
+    update_cache: true
+    name: curl
+    state: present
