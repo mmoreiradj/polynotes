@@ -114,14 +114,14 @@ export class AnswersService {
     }
   }
 
-  async fieldAnswers(formId: string, answerId: string, offset: number, limit: number, userId?: string) {
+  async fieldAnswers(formId: string, fieldId: string, offset: number, limit: number, userId?: string) {
     const form = await this.formsService.findOne(formId)
 
     if (form.owner._id.toString() !== userId && form.accessLevel !== AccessLevel.PUBLIC_WRITE) {
       throw new NotFoundException()
     }
 
-    const found = (form.fields as FormFieldDocument[]).filter((field) => field._id)
+    const found = (form.fields as FormFieldDocument[]).filter((field) => field._id.toString() === fieldId)
 
     if (!found) {
       throw new NotFoundException()
@@ -133,7 +133,7 @@ export class AnswersService {
       .aggregate()
       .match({
         form: new mongoose.Types.ObjectId(formId),
-        'answers.formField': new mongoose.Types.ObjectId(answerId),
+        'answers.formField': new mongoose.Types.ObjectId(fieldId),
         'answers.version': field.version,
       })
       .project({
@@ -142,7 +142,7 @@ export class AnswersService {
             input: '$answers',
             as: 'answer',
             cond: {
-              $eq: ['$$answer.formField', new mongoose.Types.ObjectId(answerId)],
+              $eq: ['$$answer.formField', new mongoose.Types.ObjectId(fieldId)],
             },
           },
         },
