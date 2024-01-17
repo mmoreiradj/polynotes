@@ -1,0 +1,11 @@
+ingress:
+  enabled: true
+  annotations:
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
+  className: traefik
+  hosts:
+    - host: polynotes.do.moreiradj.net
+      paths:
+        - path: /
+          pathType: ImplementationSpecific

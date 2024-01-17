@@ -1,0 +1,23 @@
+ingress:
+  enabled: true
+  annotations:
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
+  className: traefik
+  hosts:
+    - host: api-polynotes.do.moreiradj.net
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
+cookieDomain: do.moreiradj.net
+corsOrigin: https://polynotes.do.moreiradj.net
+
+jwt:
+  secretName: "jwt"
+
+smtp:
+  secretName: "smtp"
+
+mongo:
+  secretName: "mongodb-url"

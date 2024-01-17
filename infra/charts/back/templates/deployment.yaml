@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "back.fullname" . }}
+  labels:
+    {{- include "back.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "back.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "back.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "back.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: {{ .Values.service.port | quote }}
+            - name: COOKIE_DOMAIN
+              value: {{ .Values.cookieDomain }}
+            - name: CORS_ORIGIN
+              value: {{ .Values.corsOrigin }}
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.jwt.secretName }}
+                  key: {{ .Values.jwt.accessKey }}
+            - name: JWT_SECRET_MAIL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.jwt.secretName }}
+                  key: {{ .Values.jwt.mailKey }}
+            - name: JWT_EXPIRATION
+              value: 3d
+            - name: SMTP_HOST
+              value: "dummy"
+            - name: SMTP_PORT
+              # Dummy value
+              value: "587"
+            - name: SMTP_USER
+              value: "dummy"
+            - name: SMTP_PASS
+              value: "dummy"
+            - name: MONGO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.mongo.secretName }}
+                  key: {{ .Values.mongo.secretKeyUrl }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /v0/health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /v0/health
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
