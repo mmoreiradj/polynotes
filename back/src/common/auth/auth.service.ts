@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
+import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import * as argon from 'argon2'
@@ -98,14 +98,21 @@ export class AuthService {
     return
   }
 
-  async sendMail(user: UserDocument) {
-    const payload = { sub: user.id }
+  /**
+   * Note: This is for demonstration purposes only and to save on smtp costs and calls
+   * const payload = { sub: user.id }
+   *
+   * const token = this.jwtService.sign(payload, {
+   *   secret: this.configService.getOrThrow('JWT_SECRET_MAIL'),
+   *   expiresIn: '1d',
+   * })
 
-    const token = this.jwtService.sign(payload, {
-      secret: this.configService.getOrThrow('JWT_SECRET_MAIL'),
-      expiresIn: '1d',
-    })
-
-    this.mailService.sendRegistrationMail(user, token)
+   * this.mailService.sendRegistrationMail(user, token) 
+   * @param user 
+   * @returns 
+   */
+  async sendMail(_: UserDocument) {
+    Logger.log('(Dummy) Sending mail to ' + _.email)
+    return
   }
 }

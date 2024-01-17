@@ -9,7 +9,11 @@ export class UsersService {
   constructor(@InjectModel(User.name) private readonly userModel: Model<UserDocument>) {}
 
   create(createUserDto: CreateUserDto): Promise<UserDocument> {
-    const user = new this.userModel(createUserDto)
+    const user = new this.userModel({
+      ...createUserDto,
+      // NOTE: This is for demonstration purposes only and to save on smtp costs and calls
+      active: true,
+    })
     return user.save()
   }
 

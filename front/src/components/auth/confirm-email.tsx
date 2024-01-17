@@ -45,7 +45,12 @@ export const ConfirmEmail = () => {
         <img src={polynotesLogo} className={'large-logo'} />
         {!isLoading && !hasError && (
           <div>
-            <h1>One last step</h1>
+            <h1>
+              One last step{' '}
+              <span style={{ color: 'red' }}>
+                (This feature has been disabled to save on costs, simply login, your account is already activated)
+              </span>
+            </h1>
             <p>Check your mail box, we sent you a link to activate your account</p>
             <p className={'mt-3 text-xs'}>
               Done ? click{' '}
