@@ -1,42 +1,37 @@
-FROM node:16.19.1-alpine3.16 AS development
+ARG NODE_VERSION=20
+
+###################
+# BUILD
+###################
+FROM node:${NODE_VERSION}-alpine AS build
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
-RUN npm install
+COPY package.json pnpm-lock.yaml ./
 
-COPY . .
+ENV VUE_APP_NODE_ENV=production
 
-EXPOSE 5173
-
-CMD [ "npm", "run", "dev"]
-
-FROM node:16.19.1-alpine3.16 as builder
-
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-
-COPY --from=development /usr/src/app/node_modules ./node_modules
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile
 
 COPY . .
 
-ARG VITE_API_URL
+RUN pnpm run build
 
-ENV VITE_API_URL ${VITE_API_URL}
+###################
+# PRODUCTION
+###################
+FROM nginxinc/nginx-unprivileged:alpine3.18
 
-RUN npm run build
+RUN rm -rf /etc/nginx/html/*
 
-ENV NODE_ENV production
+COPY --from=build --chown=nginx:nginx /usr/src/app/dist /etc/nginx/html
+COPY --chown=nginx:nginx nginx.conf /etc/nginx/nginx.conf
 
-RUN npm ci --only=production && npm cache clean --force
-
-FROM nginx:1.23.3-alpine as production
-
-COPY --from=builder /usr/src/app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]
