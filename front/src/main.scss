@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.ProseMirror {
+  @apply border-b-2 border-zinc-500 rounded
+}
+
+.ProseMirror:focus, .ProseMirror:active {
+  outline: none;
+}
+
+@layer base {
+  h1 {
+    @apply text-4xl
+  }
+
+  h2 {
+    @apply text-2xl
+  }
+
+  h3 {
+    @apply text-xl
+  }
+
+  .blockEditor {
+    @apply m-5
+  }
+
+  .blockElementWrapper {
+    .blockElement {
+      @apply flex-grow mb-1 mt-1
+    }
+
+    .dragHandle {
+     .icon {
+      @apply h-6 w-6
+     }
+    }
+
+    @apply flex flex-row
+  }
+}
+
+.small-logo {
+  display: block;
+  max-height: 200px;
+  max-width: 200px;
+  width: auto;
+  height: auto;
+}
+
+.large-logo {
+  width: 400px;
+}
+
+.ProseMirror .is-editor-empty-heading:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.ProseMirror {
+  > * + * {
+    margin-top: 0.75em;
+  }
+
+  ul,
+  ol {
+    padding: 0 1rem;
+  }
+}
+
+.carousel-card {
+  min-width: 12rem;
+}

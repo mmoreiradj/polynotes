@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: polynotes-front
+  labels:
+    app: polynotes
+    tier: back
+spec:
+  selector:
+    matchLabels:
+      app: polynotes-front
+  template:
+    metadata:
+      labels:
+        app: polynotes-front
+    spec:
+      containers:
+      - name: polynotes-front
+        image: gitlab.polytech.umontpellier.fr:5050/polynotes-mmdj/front
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+        - name: gitlab-registry-secret
+  replicas: 2
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: polynotes-front
+  labels:
+    app: polynotes
+    tier: front
+spec:
+  selector:
+    app: polynotes-front
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80

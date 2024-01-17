@@ -1,0 +1,10 @@
+node_modules
+dist
+.eslintignore
+.eslintrc
+.git
+.gitignore
+.prettierignore
+.prettierrc
+.vscode
+.idea
