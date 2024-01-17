@@ -1,0 +1,27 @@
+name: Build All Images
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    permissions:
+      packages: write
+    name: Build All Images
+    strategy:
+      matrix:
+        inputs:
+          - image_name: "polynotes-back"
+            dockerfile_path: "back/Dockerfile"
+            context: "back"
+          - image_name: "polynotes-front"
+            dockerfile_path: "front/Dockerfile"
+            context: "front"
+    uses: mmoreiradj/polynotes/.github/workflows/build-docker-image.yaml@main
+    with:
+      image_name: ${{ matrix.inputs.image_name }}
+      dockerfile_path: ${{ matrix.inputs.dockerfile_path }}
+      context: ${{ matrix.inputs.context }}
+    secrets: inherit
