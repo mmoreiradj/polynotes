@@ -30,7 +30,6 @@ export const TinyTextSummary = ({ field, formId }: SummaryField) => {
       <div>{field.kind === FormFieldKind.TEXT && <h6>Mots les plus récurrents</h6>}</div>
 
       <ReactTagCloud
-        style={{ textAlign: 'center' }}
         tags={answers.map((answer: TagCloud) => {
           return { value: answer._id, count: answer.count }
         })}
